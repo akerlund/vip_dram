@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+build/
+sim_build*/
+results.xml
+rundir/
