@@ -1,0 +1,28 @@
+CAPI=2:
+name: "akerlund::vip_dram:1.0.0"
+description: "UVM DRAM device model VIP"
+
+filesets:
+  tb:
+    files:
+      # Compilation unit: entry point compiled directly by the simulator
+      - sv/vip_dram.svh
+      # Include files: accessed via +incdir+ (included by the .svh or vip_dram_pkg)
+      - sv/vip_dram_types_pkg.sv: {is_include_file: true}
+      - sv/vip_dram_timing_pkg.sv: {is_include_file: true}
+      - sv/vip_dram_addr_pkg.sv: {is_include_file: true}
+      - sv/vip_dram_req.sv: {is_include_file: true}
+      - sv/vip_dram_rsp.sv: {is_include_file: true}
+      - sv/vip_dram_config.sv: {is_include_file: true}
+      - sv/vip_dram_bank_state.sv: {is_include_file: true}
+      - sv/vip_dram_scheduler.sv: {is_include_file: true}
+      - sv/vip_dram.sv: {is_include_file: true}
+      - sv/vip_dram_pkg.sv: {is_include_file: true}
+    file_type: systemVerilogSource
+    depend:
+      - "akerlund::vip_memory:2.0.0"
+
+targets:
+  default:
+    filesets:
+      - tb
