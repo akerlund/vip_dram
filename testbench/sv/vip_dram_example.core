@@ -1,0 +1,47 @@
+CAPI=2:
+name: "akerlund::vip_dram_example:0"
+description: "VIP DRAM example testbench"
+
+filesets:
+  tb:
+    files:
+      # Compilation units: the tb/tc packages and the top, compiled directly and
+      # in this order (tc imports tb; the top imports both).
+      - tb/dram_tb_pkg.sv
+      - tc/dram_tc_pkg.sv
+      - tb/dram_tb_top.sv
+      # Include files: accessed via +incdir+ (included by the tb/tc packages)
+      - tb/dram_scoreboard.sv: {is_include_file: true}
+      - tb/dram_driver.sv: {is_include_file: true}
+      - tb/dram_env.sv: {is_include_file: true}
+      - tc/dram_base_test.sv: {is_include_file: true}
+      - tc/tc_dram_backdoor_preload.sv: {is_include_file: true}
+      - tc/tc_dram_bank_parallel.sv: {is_include_file: true}
+      - tc/tc_dram_faw_stress.sv: {is_include_file: true}
+      - tc/tc_dram_ideal_zero_latency.sv: {is_include_file: true}
+      - tc/tc_dram_page_hit_streak.sv: {is_include_file: true}
+      - tc/tc_dram_page_thrash.sv: {is_include_file: true}
+      - tc/tc_dram_partial_write.sv: {is_include_file: true}
+      - tc/tc_dram_predict_matches_schedule.sv: {is_include_file: true}
+      - tc/tc_dram_preset_sweep.sv: {is_include_file: true}
+      - tc/tc_dram_read_fault.sv: {is_include_file: true}
+      - tc/tc_dram_refresh_explicit.sv: {is_include_file: true}
+      - tc/tc_dram_reset_recovery.sv: {is_include_file: true}
+      - tc/tc_dram_smoke.sv: {is_include_file: true}
+      - tc/tc_dram_wr_rd_turnaround.sv: {is_include_file: true}
+      - tc/tc_dram_writes_then_reads.sv: {is_include_file: true}
+    file_type: systemVerilogSource
+    depend:
+      - "akerlund::vip_dram:1.0.0"
+      - "akerlund::vip_report_server:0"
+
+targets:
+  default:
+    toplevel: dram_tb_top
+    filesets:
+      - tb
+    tools:
+      vcs:
+        vcs_options:
+          - -ntb_opts
+          - uvm-1.2
