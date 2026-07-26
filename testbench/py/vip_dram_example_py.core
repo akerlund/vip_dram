@@ -8,13 +8,13 @@ description: "VIP DRAM example - pyUVM/cocotb flow (Verilator)"
 # the model is launched with COCOTB_TEST_MODULES set, so `fusesoc run --target
 # sim` builds AND runs the cocotb testbench in one step.
 #
-# The top is the pure-TLM shell (dram_vip_top): the vip_dram device has NO
+# The top is the pure-TLM shell (dram_hdl_top): the vip_dram device has NO
 # signals -- every delay is a cocotb Timer against absolute ns -- so unlike the
 # AXI4 example there are no top-level nets to expose (no --public-flat-rw needed).
 #
 # IMPORTANT -- PYTHONPATH: FuseSoC runs cocotb from its build work_root, so the
-# directory holding dram_tc_top.py (this 'py' dir) must be on PYTHONPATH for
-# cocotb to import the test module. dram_tc_top.py then bootstraps the rest of
+# directory holding dram_tb_top.py (tb/) must be on PYTHONPATH for cocotb to
+# import the test module. dram_tb_top.py then bootstraps the rest of
 # the source dirs (vip_dram py/, submodules/vip_memory/py, tb/, tc/) onto
 # sys.path itself. Use run_fusesoc.sh, which exports PATH + PYTHONPATH.
 #
@@ -22,12 +22,13 @@ description: "VIP DRAM example - pyUVM/cocotb flow (Verilator)"
 # run_test() clears the factory overrides + singletons between tests and cocotb
 # kills each test's background tasks at test end, so per-test isolation holds
 # without fresh sims. Select a subset with COCOTB_TEST_FILTER (a regex matched
-# against the @cocotb.test names, e.g. "tb_smoke" or "tb_smoke|tb_read_fault").
+# against the public @cocotb.test names, e.g. "tc_dram_smoke" or
+# "tc_dram_smoke|tc_dram_read_fault").
 
 filesets:
   tb:
     files:
-      - tb/dram_vip_top.sv
+      - tb/dram_hdl_top.sv
     file_type: systemVerilogSource
 
 targets:
@@ -37,7 +38,7 @@ targets:
       tool: verilator
     filesets:
       - tb
-    toplevel: dram_vip_top
+    toplevel: dram_hdl_top
 
   # `fusesoc run --target lint ...` -- structural + lint check via Verilator.
   lint:
@@ -54,7 +55,7 @@ targets:
     <<: *default
     flow_options:
       tool: verilator
-      cocotb_module: dram_tc_top
+      cocotb_module: dram_tb_top
       mode: cc
       verilator_options:
         - -Wno-fatal

@@ -1,19 +1,24 @@
 # vip_dram — Device-Only Example Test Cases
 
-All tests live under [`tc/`](tc/), follow the `tc_dram_<name>.sv` convention,
-and are registered in [`tc/dram_tc_pkg.sv`](tc/dram_tc_pkg.sv). They drive the
-`vip_dram` device **directly over its neutral TLM API** — no memory controller,
-no AXI4, no clock (see [README.md](README.md) for the testbench architecture).
+The SystemVerilog tests live under [`sv/tc/`](sv/tc/) and the Python tests live
+under [`py/tc/`](py/tc/). Both follow the `tc_dram_<name>` convention and drive
+the `vip_dram` device **directly over its neutral TLM API** — no memory
+controller, no AXI4, no clock (see [README.md](README.md) for the testbench
+architecture).
 
-Run a single test with the standalone VCS flow:
+Run a single SV test after building the FuseSoC/VCS target:
 
 ```
-./scripts/compile.sh tc_dram_smoke      # build + run one test
+./akerlund__vip_dram_example_0 +UVM_TESTNAME=tc_dram_smoke -l tc_dram_smoke.log
 ```
 
-(or feed [`yml/compile.yml`](yml/compile.yml) to the project regression flow and
-select with `+UVM_TESTNAME=tc_dram_<name>`). Every test passes with
-`UVM_ERROR=0, UVM_FATAL=0`.
+Run a single Python test from `testbench/py`:
+
+```
+python3 run_all_tcs.py tc_dram_smoke
+```
+
+Every test passes with `UVM_ERROR=0, UVM_FATAL=0`.
 
 Each test issues requests through the driver and checks the responses two ways:
 

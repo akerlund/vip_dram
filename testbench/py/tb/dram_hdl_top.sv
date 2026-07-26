@@ -21,7 +21,7 @@
 // SOFTWARE.
 //
 // Description:
-// dram_vip_top
+// dram_hdl_top
 //
 // Minimal Verilator toplevel for the pure-TLM vip_dram pyUVM/cocotb port. The
 // device has NO signals -- every delay is a cocotb Timer against absolute ns --
@@ -33,7 +33,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 `timescale 1ns/1ps
-module dram_vip_top;
+module dram_hdl_top;
 
   // A single dummy net keeps the module non-empty for Verilator; cocotb never
   // touches it (the testbench is entirely TLM + Timer driven).

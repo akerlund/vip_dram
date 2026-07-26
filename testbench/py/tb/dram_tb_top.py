@@ -23,11 +23,11 @@
 ## Description:
 ## cocotb testbench top (counterpart of testbench/sv/tb/dram_tb_top.sv): runs each
 ## ported vip_dram device-only test case (uvm_test subclass) on the pure-TLM
-## dram_vip_top shell. No clock, no bus -- the device advances sim time itself via
+## dram_hdl_top shell. No clock, no bus -- the device advances sim time itself via
 ## cocotb Timers. This module also folds in the SV dram_tc_pkg role: the import
 ## block below pulls in every TC so the pyuvm factory can resolve it by name. One
-## @cocotb.test wrapper `tb_<name>` per TC; run_all_tcs.py selects which via
-## `testcase=` so each runs in a fresh simulator (clean uvm_root singleton).
+## @cocotb.test wrapper per TC; run_all_tcs.py selects the public `tc_dram_*`
+## names via `testcase=` so each runs in a fresh simulator.
 ##
 ################################################################################
 
@@ -39,6 +39,7 @@ import cocotb
 from pyuvm import uvm_root
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
+_PY_ROOT = os.path.dirname(_HERE)
 
 
 def _find_vip_root(start):
@@ -61,18 +62,18 @@ def _find_vip_root(start):
 _ROOT = _find_vip_root(_HERE)
 # Shared VIP components this example imports (mirrors the SV `depend` graph):
 # vip_dram's own py/ at the repo root, and vip_memory checked out as a git
-# submodule. Example-local dirs (tb/, tc/) are relative to this file.
+# submodule. Example-local dirs are relative to testbench/py.
 _COMPONENT_PYS = [
     os.path.join(_ROOT, "py"),
     os.path.join(_ROOT, "submodules", "vip_memory", "py"),
 ]
-_LOCAL_PYS = [os.path.join(_HERE, "tb"), os.path.join(_HERE, "tc")]
+_LOCAL_PYS = [_HERE, os.path.join(_PY_ROOT, "tc")]
 for p in _COMPONENT_PYS + _LOCAL_PYS:
   if os.path.isdir(p) and p not in sys.path:
     sys.path.insert(0, p)
   elif not os.path.isdir(p):
     raise RuntimeError(
-        f"dram_tc_top: expected source dir not found: {p}\n"
+        f"dram_tb_top: expected source dir not found: {p}\n"
         f"  (VIP root resolved to {_ROOT}; set $VIP_ROOT to override)")
 
 # Import TC classes so the pyuvm factory can resolve them by name.
@@ -99,76 +100,76 @@ async def _run(test_name):
   await uvm_root().run_test(test_name)
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_smoke", timeout_time=10, timeout_unit="ms")
 async def tb_smoke(dut):
   await _run("tc_dram_smoke")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_backdoor_preload", timeout_time=10, timeout_unit="ms")
 async def tb_backdoor_preload(dut):
   await _run("tc_dram_backdoor_preload")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_bank_parallel", timeout_time=10, timeout_unit="ms")
 async def tb_bank_parallel(dut):
   await _run("tc_dram_bank_parallel")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_faw_stress", timeout_time=10, timeout_unit="ms")
 async def tb_faw_stress(dut):
   await _run("tc_dram_faw_stress")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_ideal_zero_latency", timeout_time=10, timeout_unit="ms")
 async def tb_ideal_zero_latency(dut):
   await _run("tc_dram_ideal_zero_latency")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_page_hit_streak", timeout_time=10, timeout_unit="ms")
 async def tb_page_hit_streak(dut):
   await _run("tc_dram_page_hit_streak")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_page_thrash", timeout_time=10, timeout_unit="ms")
 async def tb_page_thrash(dut):
   await _run("tc_dram_page_thrash")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_partial_write", timeout_time=10, timeout_unit="ms")
 async def tb_partial_write(dut):
   await _run("tc_dram_partial_write")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_predict_matches_schedule", timeout_time=10, timeout_unit="ms")
 async def tb_predict_matches_schedule(dut):
   await _run("tc_dram_predict_matches_schedule")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_preset_sweep", timeout_time=10, timeout_unit="ms")
 async def tb_preset_sweep(dut):
   await _run("tc_dram_preset_sweep")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_read_fault", timeout_time=10, timeout_unit="ms")
 async def tb_read_fault(dut):
   await _run("tc_dram_read_fault")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_refresh_explicit", timeout_time=10, timeout_unit="ms")
 async def tb_refresh_explicit(dut):
   await _run("tc_dram_refresh_explicit")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_reset_recovery", timeout_time=10, timeout_unit="ms")
 async def tb_reset_recovery(dut):
   await _run("tc_dram_reset_recovery")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_wr_rd_turnaround", timeout_time=10, timeout_unit="ms")
 async def tb_wr_rd_turnaround(dut):
   await _run("tc_dram_wr_rd_turnaround")
 
 
-@cocotb.test(timeout_time=10, timeout_unit="ms")
+@cocotb.test(name="tc_dram_writes_then_reads", timeout_time=10, timeout_unit="ms")
 async def tb_writes_then_reads(dut):
   await _run("tc_dram_writes_then_reads")

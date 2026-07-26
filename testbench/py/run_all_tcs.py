@@ -23,12 +23,12 @@
 ##
 ## Description:
 ## Runs every ported vip_dram test case (uvm_test): build the pure-TLM shell
-## (dram_vip_top) once, then run each TC in its own fresh sim invocation (clean
+## (dram_hdl_top) once, then run each TC in its own fresh sim invocation (clean
 ## uvm_root per TC).
 ##
 ##   python3 run_all_tcs.py                         # all TCs
-##   python3 run_all_tcs.py tb_smoke                # one TC
-##   python3 run_all_tcs.py tb_smoke tb_faw_stress  # a subset
+##   python3 run_all_tcs.py tc_dram_smoke                 # one TC
+##   python3 run_all_tcs.py tc_dram_smoke tc_dram_faw_stress
 ##
 ################################################################################
 
@@ -48,21 +48,21 @@ MEM_PY = HERE.parent.parent / "submodules" / "vip_memory" / "py"
 SIM = os.environ.get("SIM", "verilator")
 
 TCS = [
-    "tb_smoke",
-    "tb_writes_then_reads",
-    "tb_backdoor_preload",
-    "tb_bank_parallel",
-    "tb_page_hit_streak",
-    "tb_page_thrash",
-    "tb_faw_stress",
-    "tb_ideal_zero_latency",
-    "tb_partial_write",
-    "tb_predict_matches_schedule",
-    "tb_preset_sweep",
-    "tb_read_fault",
-    "tb_refresh_explicit",
-    "tb_reset_recovery",
-    "tb_wr_rd_turnaround",
+    "tc_dram_smoke",
+    "tc_dram_writes_then_reads",
+    "tc_dram_backdoor_preload",
+    "tc_dram_bank_parallel",
+    "tc_dram_page_hit_streak",
+    "tc_dram_page_thrash",
+    "tc_dram_faw_stress",
+    "tc_dram_ideal_zero_latency",
+    "tc_dram_partial_write",
+    "tc_dram_predict_matches_schedule",
+    "tc_dram_preset_sweep",
+    "tc_dram_read_fault",
+    "tc_dram_refresh_explicit",
+    "tc_dram_reset_recovery",
+    "tc_dram_wr_rd_turnaround",
 ]
 
 
@@ -78,8 +78,8 @@ def main():
   if (user_vl / "verilator").exists():
     os.environ["PATH"] = os.pathsep.join([str(user_vl), os.environ["PATH"]])
 
-  # dram_tc_top.py bootstraps py/ + submodules/vip_memory/py + tb/ + tc/ itself,
-  # but PYTHONPATH must at least locate dram_tc_top (this dir) and the source
+  # dram_tb_top.py bootstraps py/ + submodules/vip_memory/py + tb/ + tc/ itself,
+  # but PYTHONPATH must at least locate dram_tb_top and the source
   # dirs for the child sim process.
   paths = [str(HERE), str(TB), str(TC), str(PY), str(MEM_PY)]
   for p in paths:
@@ -91,8 +91,8 @@ def main():
 
   runner = get_runner(SIM)
   runner.build(
-      sources=[str(TB / "dram_vip_top.sv")],
-      hdl_toplevel="dram_vip_top",
+      sources=[str(TB / "dram_hdl_top.sv")],
+      hdl_toplevel="dram_hdl_top",
       build_dir=str(HERE / "sim_build_tcs"),
       build_args=["-Wno-fatal"],
       always=True,
@@ -100,8 +100,8 @@ def main():
   for tc in tcs:
     print(f"\n================ {tc} ================")
     runner.test(
-        hdl_toplevel="dram_vip_top",
-        test_module="dram_tc_top",
+        hdl_toplevel="dram_hdl_top",
+        test_module="dram_tb_top",
         testcase=tc,
         test_dir=str(HERE),
         build_dir=str(HERE / "sim_build_tcs"),

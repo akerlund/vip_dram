@@ -171,13 +171,11 @@ submodules/vip/vip_dram/
 ├── vip_dram_scheduler.sv        (latency calc + FAW + REF execution)
 ├── vip_dram.sv                  (the uvm_component)
 │
-└── yml/
+└── vip_dram.core
 ```
 
-Examples live under the shared
-[`submodules/vip/examples/`](../../examples/) tree — `examples/vip_dram/`
-holds device-only contract tests; the manager → `vip_mc` → `vip_dram`
-end-to-end TB belongs to `vip_mc` and lives in `examples/vip_mc/`.
+Device-only contract tests live under `testbench/`. The manager → `vip_mc` →
+`vip_dram` end-to-end TB belongs to `vip_mc`.
 
 ---
 
@@ -843,8 +841,8 @@ dependencies. It can run in any UVM env with or without `vip_mc`.
 
 ## 9. Verification of the model itself
 
-Self-checking tests in `submodules/vip/examples/vip_dram/`. They drive
-`vip_dram` directly via its TLM API — no MC, no AXI4, no bus.
+Self-checking tests in `testbench/`. They drive `vip_dram` directly via its TLM
+API — no MC, no AXI4, no bus.
 
 1. **Single-RD latency** — push one `vip_dram_req` for an IDLE bank;
    `first_beat_ready_time == arrival_time + tRCD + tCL` **exactly** (no `tRP`
@@ -959,8 +957,8 @@ layer, vip_mc §11 "ECC and error modeling").
 4. `vip_dram_addr_pkg.sv` (address-map decode/encode functions).
 5. `vip_dram_bank_state.sv` + `vip_dram_scheduler.sv` (incl. `predict()`).
 6. `vip_dram.sv` (consumer task, backdoor API).
-7. Contract tests §9 (examples/vip_dram).
-8. README, `.svh`, `yml/compile.yml`.
+7. Contract tests §9 (`testbench/`).
+8. README, `.svh`, and FuseSoC `.core` files.
 
 Then move to `vip_mc/IMPLEMENTATION_PLAN.md` (separate sibling VIP):
 AXI4 face, command queue, refresh scheduler, address mapping policy,
@@ -970,17 +968,15 @@ optional FR-FCFS — wired to `vip_dram` over the neutral TLM API.
 
 ## 12. Example testbench (device-only)
 
-Lives in `submodules/vip/examples/vip_dram/`. Drives the device directly
-over its TLM API — no manager, no MC, no AXI4. The full system TB
-(manager → `vip_mc` → `vip_dram`) belongs to `vip_mc` and lives in
-`submodules/vip/examples/vip_mc/`.
+Lives in `testbench/`. Drives the device directly over its TLM API — no manager,
+no MC, no AXI4. The full system TB (manager → `vip_mc` → `vip_dram`) belongs to
+`vip_mc`.
 
 ### 12.1 Directory layout
 
 ```text
-examples/vip_dram/
+testbench/sv/
 ├── tb/
-│   ├── tb.svh
 │   ├── dram_tb_pkg.sv
 │   ├── dram_tb_top.sv                  (no clk/rst — purely TLM)
 │   ├── dram_env.sv                     (vip_dram + a tiny TLM driver)
@@ -1002,9 +998,7 @@ examples/vip_dram/
 │   ├── tc_dram_reset_recovery.sv
 │   ├── tc_dram_preset_sweep.sv
 │   └── tc_dram_ideal_zero_latency.sv
-├── rundir/
-├── scripts/compile.sh
-└── yml/compile.yml
+└── vip_dram_example.core
 ```
 
 ### 12.2 What the scoreboard checks
@@ -1035,8 +1029,7 @@ checks are straightforward: write + read + compare against `vip_mem`.
 
 ### 12.4 Running
 
-`scripts/compile.sh` invokes the project's standard sim flow;
-`yml/compile.yml` orders files:
+FuseSoC builds `testbench/sv/vip_dram_example.core`, which orders files:
 
 1. `vip_memory_pkg`, `bool_pkg`
 2. `vip_dram_types_pkg`, `vip_dram_timing_pkg`, `vip_dram_addr_pkg`, then

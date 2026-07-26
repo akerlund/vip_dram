@@ -455,19 +455,25 @@ no `bool_pkg` — the two behavioural flags in `vip_dram_config` are plain `bit`
 
 ## Verification (device-only example)
 
-Self-checking contract tests live in
-[`examples/vip_dram/`](../examples/vip_dram/) and drive the device directly over
-its TLM API — no MC, no AXI4, no clock. A small env wires a driver into
-`req_fifo` and a predictor-vs-observed scoreboard onto `rsp_port`. Run one test
-with the standalone VCS flow:
+Self-checking contract tests live in [`testbench/`](testbench/) and drive the
+device directly over its TLM API — no MC, no AXI4, no clock. A small env wires a
+driver into `req_fifo` and a predictor-vs-observed scoreboard onto `rsp_port`.
+Build the SV flow from the repository root:
 
 ```sh
-cd examples/vip_dram
-./scripts/compile.sh tc_dram_smoke      # or any tc_* below
+fusesoc --cores-root . run --target default --tool vcs --setup --build \
+        akerlund::vip_dram_example:0
 ```
 
-(or feed `examples/vip_dram/yml/compile.yml` to the project's regression flow;
-pick a test with `+UVM_TESTNAME=<tc_name>`). The thirteen cases:
+The Python port runs from `testbench/py`:
+
+```sh
+python3 run_all_tcs.py tc_dram_smoke
+```
+
+See [testbench/README.md](testbench/README.md) and
+[testbench/TEST_CASES.md](testbench/TEST_CASES.md) for the current flow and
+testcase catalog. The testcases include:
 
 | Test | Stresses |
 |------|----------|
