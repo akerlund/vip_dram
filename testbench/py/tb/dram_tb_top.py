@@ -26,7 +26,7 @@
 ## dram_hdl_top shell. No clock, no bus -- the device advances sim time itself via
 ## cocotb Timers. This module also folds in the SV dram_tc_pkg role: the import
 ## block below pulls in every TC so the pyuvm factory can resolve it by name. One
-## @cocotb.test wrapper per TC; run_all_tcs.py selects the public `tc_dram_*`
+## @cocotb.test entry per TC; run_all_tcs.py selects the public `tc_dram_*`
 ## names via `testcase=` so each runs in a fresh simulator.
 ##
 ################################################################################
@@ -101,75 +101,75 @@ async def _run(test_name):
 
 
 @cocotb.test(name="tc_dram_smoke", timeout_time=10, timeout_unit="ms")
-async def tb_smoke(dut):
+async def tc_dram_smoke(dut):
   await _run("tc_dram_smoke")
 
 
 @cocotb.test(name="tc_dram_backdoor_preload", timeout_time=10, timeout_unit="ms")
-async def tb_backdoor_preload(dut):
+async def tc_dram_backdoor_preload(dut):
   await _run("tc_dram_backdoor_preload")
 
 
 @cocotb.test(name="tc_dram_bank_parallel", timeout_time=10, timeout_unit="ms")
-async def tb_bank_parallel(dut):
+async def tc_dram_bank_parallel(dut):
   await _run("tc_dram_bank_parallel")
 
 
 @cocotb.test(name="tc_dram_faw_stress", timeout_time=10, timeout_unit="ms")
-async def tb_faw_stress(dut):
+async def tc_dram_faw_stress(dut):
   await _run("tc_dram_faw_stress")
 
 
 @cocotb.test(name="tc_dram_ideal_zero_latency", timeout_time=10, timeout_unit="ms")
-async def tb_ideal_zero_latency(dut):
+async def tc_dram_ideal_zero_latency(dut):
   await _run("tc_dram_ideal_zero_latency")
 
 
 @cocotb.test(name="tc_dram_page_hit_streak", timeout_time=10, timeout_unit="ms")
-async def tb_page_hit_streak(dut):
+async def tc_dram_page_hit_streak(dut):
   await _run("tc_dram_page_hit_streak")
 
 
 @cocotb.test(name="tc_dram_page_thrash", timeout_time=10, timeout_unit="ms")
-async def tb_page_thrash(dut):
+async def tc_dram_page_thrash(dut):
   await _run("tc_dram_page_thrash")
 
 
 @cocotb.test(name="tc_dram_partial_write", timeout_time=10, timeout_unit="ms")
-async def tb_partial_write(dut):
+async def tc_dram_partial_write(dut):
   await _run("tc_dram_partial_write")
 
 
 @cocotb.test(name="tc_dram_predict_matches_schedule", timeout_time=10, timeout_unit="ms")
-async def tb_predict_matches_schedule(dut):
+async def tc_dram_predict_matches_schedule(dut):
   await _run("tc_dram_predict_matches_schedule")
 
 
 @cocotb.test(name="tc_dram_preset_sweep", timeout_time=10, timeout_unit="ms")
-async def tb_preset_sweep(dut):
+async def tc_dram_preset_sweep(dut):
   await _run("tc_dram_preset_sweep")
 
 
 @cocotb.test(name="tc_dram_read_fault", timeout_time=10, timeout_unit="ms")
-async def tb_read_fault(dut):
+async def tc_dram_read_fault(dut):
   await _run("tc_dram_read_fault")
 
 
 @cocotb.test(name="tc_dram_refresh_explicit", timeout_time=10, timeout_unit="ms")
-async def tb_refresh_explicit(dut):
+async def tc_dram_refresh_explicit(dut):
   await _run("tc_dram_refresh_explicit")
 
 
 @cocotb.test(name="tc_dram_reset_recovery", timeout_time=10, timeout_unit="ms")
-async def tb_reset_recovery(dut):
+async def tc_dram_reset_recovery(dut):
   await _run("tc_dram_reset_recovery")
 
 
 @cocotb.test(name="tc_dram_wr_rd_turnaround", timeout_time=10, timeout_unit="ms")
-async def tb_wr_rd_turnaround(dut):
+async def tc_dram_wr_rd_turnaround(dut):
   await _run("tc_dram_wr_rd_turnaround")
 
 
 @cocotb.test(name="tc_dram_writes_then_reads", timeout_time=10, timeout_unit="ms")
-async def tb_writes_then_reads(dut):
+async def tc_dram_writes_then_reads(dut):
   await _run("tc_dram_writes_then_reads")
