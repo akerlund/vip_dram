@@ -52,7 +52,7 @@ vip_dram/
 | `vip_dram #(CFG_P)` parameterized classes | a runtime `VipDramCfgT` object; widths are plain `int`, no parameterized classes |
 | implicit packed-vector truncation | explicit `& mask(width)` — Python ints are unbounded (`mask`/`trunc`/`clog2` in `vip_dram_types_pkg.py`) |
 | absolute-ns delays `#(deliver_at - $realtime)` | `await delay_ns(dt)` → `cocotb.Timer` in integer ps; `$realtime` → `sim_time_ns()` (1 ns / 1 ps top; every preset value is exact ps) |
-| `fork`/`join_any`/`join_none`/`disable fork` reset | `cocotb.start_soon` + an in-flight task set that reset `.kill()`s; the worker is a `First(work, reset)` race |
+| `fork`/`join_any`/`join_none`/`disable fork` reset | `cocotb.start_soon` + an in-flight task set that reset `.cancel()`s; the worker is a `First(work, reset)` race |
 | `uvm_event` (reset handshake) | a small persistent-trigger `_UvmEvent` in `vip_dram.py` (pyUVM has no `uvm_event`) |
 | `uvm_tlm_analysis_fifo` / `uvm_analysis_port` | same pyUVM classes; the device drains `await req_fifo.get()` |
 | packed structs (`result_t`, `lat_t`, cfg records) | `@dataclass` objects; `realtime` fields → Python `float` ns |

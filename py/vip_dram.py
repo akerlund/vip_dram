@@ -36,7 +36,7 @@
 ## All timing is absolute NANOSECONDS computed against sim_time_ns(). The SV
 ## fork/join_any/join_none/disable-fork reset dance ports to cocotb tasks: a
 ## worker drains the fifo, each response is a start_soon task tracked in
-## _inflight, and a reset kills the worker AND every in-flight response task
+## _inflight, and a reset cancels the worker AND every in-flight response task
 ## before flushing state.
 ##
 ################################################################################
@@ -135,7 +135,7 @@ class vip_dram(uvm_component):
 
   # ---------------------------------------------------------------------------
   # Consumer (SV §7.5). A worker drains requests forever; on_reset waits for a
-  # reset. First() returns ONLY on reset (work never completes), so we then kill
+  # reset. First() returns ONLY on reset (work never completes), so we cancel
   # the worker AND every in-flight response task before flushing state.
   # ---------------------------------------------------------------------------
   async def run_phase(self):
@@ -145,12 +145,12 @@ class vip_dram(uvm_component):
 
       await First(work, on_reset)
       # Reset fired (work never finishes): cancel work + all delayed responses.
-      work.kill()
+      work.cancel()
       if not on_reset.done():
-        on_reset.kill()
+        on_reset.cancel()
       for t in list(self._inflight):
         if not t.done():
-          t.kill()
+          t.cancel()
       self._inflight.clear()
 
       self.flush_in_flight()
