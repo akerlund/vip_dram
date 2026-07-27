@@ -45,3 +45,4 @@ targets:
         vcs_options:
           - -ntb_opts
           - uvm-1.2
+          - -timescale=1ns/1ps
